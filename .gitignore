@@ -1,0 +1,33 @@
+# KubeArmor
+kubearmor
+karmor
+
+# KubeArmor YAML Generator
+deploygen
+
+# contribution
+.vscode
+.idea
+
+# vagrant
+.vagrant
+contribution/vagrant/*.log
+
+# packages
+*.deb
+*.rpm
+.coverprofile
+
+# object files
+**/BPF/**/*.o
+
+# protobuf
+protobuf/go.sum
+
+# kernel header
+vmlinux.h
+
+# ignore list
+**/ignore.lst
+**/syscheck
+**/cflags.lst

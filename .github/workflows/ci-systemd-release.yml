@@ -1,0 +1,45 @@
+name: ci-systemd-release
+
+on:
+  # push:
+  #   tags:
+  #     - "*"
+  workflow_dispatch:
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: v1.18
+
+      - name: Install the latest LLVM toolchain
+        run: ./.github/workflows/install-llvm.sh
+
+      - name: Compile libbpf
+        run: ./.github/workflows/install-libbpf.sh
+        
+      - name: Compile syscheck Binary
+        run: make syscheck
+        working-directory: KubeArmor/BPF/tests
+
+      - name: Install karmor
+        run: curl -sfL https://raw.githubusercontent.com/kubearmor/kubearmor-client/main/install.sh | sudo sh -s -- -b .
+        working-directory: KubeArmor
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: v1.12.2
+          args: release --rm-dist
+          workdir: KubeArmor
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
